@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Master - Juegos Matemáticos Interactivos</title>
+    <title>Math Master - Trilingual Math Suite</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -14,8 +14,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- Tone.js for Web Audio Synth Effects -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
     <script>
         tailwind.config = {
@@ -26,9 +24,7 @@
                         display: ['Outfit', 'sans-serif'],
                     },
                     animation: {
-                        'pulse-fast': 'pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'shake': 'shake 0.4s ease-in-out',
-                        'bounce-short': 'bounce 0.5s ease-in-out 1',
                     },
                     keyframes: {
                         shake: {
@@ -41,6 +37,7 @@
             }
         }
     </script>
+
     <style>
         ::-webkit-scrollbar {
             width: 6px;
@@ -71,7 +68,7 @@
 
     <div class="min-h-screen flex flex-col max-w-6xl mx-auto w-full p-3 sm:p-6 lg:p-8 space-y-6">
 
-        <!-- Top Header Navigation -->
+        <!-- Header Container -->
         <header class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl border-slate-800">
             <div class="flex items-center gap-3 cursor-pointer" onclick="volverAlMenu()">
                 <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
@@ -81,30 +78,44 @@
                     <h1 class="font-display text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
                         Math Master
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-400 font-medium">Aprende matemáticas jugando • Progreso guardado por nombre</p>
+                    <p id="appSubtitle" class="text-xs sm:text-sm text-slate-400 font-medium">
+                        Aprende matemáticas jugando • Progreso guardado por nombre
+                    </p>
                 </div>
             </div>
 
-            <!-- Profile & Save Controls Bar -->
-            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                <div class="relative flex-1 md:w-52">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-user-gear"></i>
-                    </span>
-                    <input type="text" id="playerInput" placeholder="Tu Nombre (ej. Angelo)"
-                        class="w-full pl-9 pr-3 py-2 bg-slate-900/80 border border-slate-700/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-slate-500 text-slate-100 font-medium transition-all"
-                        maxlength="16" />
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                <!-- Language Selector Dropdown -->
+                <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 shadow-inner">
+                    <i class="fa-solid fa-globe text-indigo-400 text-sm"></i>
+                    <select id="languageSelect" onchange="cambiarIdioma(this.value)" class="bg-transparent text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none cursor-pointer">
+                        <option value="es" class="bg-slate-900 text-slate-100">Español 🇪🇸</option>
+                        <option value="it" class="bg-slate-900 text-slate-100">Italiano 🇮🇹</option>
+                        <option value="en" class="bg-slate-900 text-slate-100">English 🇬🇧</option>
+                    </select>
                 </div>
-                <button onclick="guardarPartida()" 
-                    class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span>Guardar</span>
-                </button>
-                <button onclick="cargarPartidaManual()" 
-                    class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-sm rounded-xl active:scale-95 transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-folder-open"></i>
-                    <span>Cargar</span>
-                </button>
+
+                <!-- Profile Input Controls -->
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:w-48">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </span>
+                        <input type="text" id="playerInput" placeholder="Nombre / Angelo"
+                            class="w-full pl-9 pr-3 py-2 bg-slate-900/80 border border-slate-700/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-slate-500 text-slate-100 font-medium transition-all"
+                            maxlength="16" />
+                    </div>
+                    <button onclick="guardarPartida()" 
+                        class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span id="btnSaveText">Guardar</span>
+                    </button>
+                    <button onclick="cargarPartidaManual()" 
+                        class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-sm rounded-xl active:scale-95 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <span id="btnLoadText">Cargar</span>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -115,52 +126,52 @@
                     <i class="fa-solid fa-user"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-indigo-300 font-semibold uppercase tracking-wider">Jugador Activo:</span>
+                    <span id="lblActivePlayer" class="text-xs text-indigo-300 font-semibold uppercase tracking-wider">Jugador Activo:</span>
                     <span id="activePlayerName" class="font-display font-bold text-slate-100 text-lg ml-1">Angelo</span>
                 </div>
             </div>
             <button onclick="desconectarPerfil()" class="text-xs text-slate-400 hover:text-red-400 underline transition-colors">
-                <i class="fa-solid fa-power-off mr-1"></i>Cambiar
+                <i class="fa-solid fa-power-off mr-1"></i><span id="lblDisconnect">Cambiar</span>
             </button>
         </div>
 
-        <!-- VIEW 1: MAIN MENU (Mode & Difficulty Selector) -->
+        <!-- VIEW 1: MAIN MENU -->
         <div id="viewMenu" class="space-y-6">
             
-            <!-- Difficulty Selector Header -->
+            <!-- Difficulty Selector Section -->
             <div class="glass-panel rounded-2xl p-6 border-slate-800">
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
-                        <h2 class="font-display font-extrabold text-xl text-slate-100 flex items-center gap-2">
+                        <h2 id="lblDifficultyTitle" class="font-display font-extrabold text-xl text-slate-100 flex items-center gap-2">
                             <i class="fa-solid fa-gauge-high text-indigo-400"></i>
                             Elige el Nivel de Dificultad
                         </h2>
-                        <p class="text-xs text-slate-400">Ajusta el rango numérico según tu nivel actual.</p>
+                        <p id="lblDifficultySub" class="text-xs text-slate-400">Ajusta el rango numérico según tu nivel actual.</p>
                     </div>
                     
                     <div class="grid grid-cols-3 gap-2 w-full sm:w-auto">
                         <button onclick="setDificultad('facil')" id="diff-facil"
                             class="diff-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition-all flex flex-col items-center gap-0.5 bg-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-600/20">
-                            <span>FÁCIL</span>
+                            <span id="diffFacilText">FÁCIL</span>
                             <span class="text-[10px] font-normal opacity-80">(1 - 10)</span>
                         </button>
                         <button onclick="setDificultad('medio')" id="diff-medio"
                             class="diff-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition-all flex flex-col items-center gap-0.5 bg-slate-900 border-slate-700 text-slate-400 hover:text-white">
-                            <span>MEDIO</span>
+                            <span id="diffMedioText">MEDIO</span>
                             <span class="text-[10px] font-normal opacity-80">(10 - 50)</span>
                         </button>
                         <button onclick="setDificultad('dificil')" id="diff-dificil"
                             class="diff-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition-all flex flex-col items-center gap-0.5 bg-slate-900 border-slate-700 text-slate-400 hover:text-white">
-                            <span>DIFÍCIL</span>
+                            <span id="diffDificilText">DIFÍCIL</span>
                             <span class="text-[10px] font-normal opacity-80">(50 - 200+)</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Game Modes Grid -->
+            <!-- Game Modes Cards -->
             <div>
-                <h2 class="font-display font-extrabold text-2xl text-slate-100 mb-4 flex items-center gap-2">
+                <h2 id="lblModesTitle" class="font-display font-extrabold text-2xl text-slate-100 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-gamepad text-purple-400"></i>
                     Selecciona una Modalidad
                 </h2>
@@ -174,11 +185,11 @@
                             #
                         </div>
                         <div>
-                            <h3 class="font-display font-extrabold text-xl text-slate-100 mb-1">Par o Impar</h3>
-                            <p class="text-xs text-slate-400">Identifica rápidamente si la cifra generada es divisible entre 2.</p>
+                            <h3 id="modeParImparTitle" class="font-display font-extrabold text-xl text-slate-100 mb-1">Par o Impar</h3>
+                            <p id="modeParImparDesc" class="text-xs text-slate-400">Identifica rápidamente si la cifra generada es divisible entre 2.</p>
                         </div>
                         <div class="mt-6 flex items-center justify-between text-xs font-bold text-indigo-400">
-                            <span>JUGAR AHORA</span>
+                            <span class="lblPlayNow">JUGAR AHORA</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -190,11 +201,11 @@
                             <i class="fa-solid fa-plus"></i>
                         </div>
                         <div>
-                            <h3 class="font-display font-extrabold text-xl text-slate-100 mb-1">Sumas</h3>
-                            <p class="text-xs text-slate-400">Suma números rápidamente y ejercita tu cálculo mental.</p>
+                            <h3 id="modeSumasTitle" class="font-display font-extrabold text-xl text-slate-100 mb-1">Sumas</h3>
+                            <p id="modeSumasDesc" class="text-xs text-slate-400">Suma números rápidamente y ejercita tu cálculo mental.</p>
                         </div>
                         <div class="mt-6 flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span>JUGAR AHORA</span>
+                            <span class="lblPlayNow">JUGAR AHORA</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -206,11 +217,11 @@
                             <i class="fa-solid fa-minus"></i>
                         </div>
                         <div>
-                            <h3 class="font-display font-extrabold text-xl text-slate-100 mb-1">Restas</h3>
-                            <p class="text-xs text-slate-400">Calcula diferencias sin que el resultado sea negativo.</p>
+                            <h3 id="modeRestasTitle" class="font-display font-extrabold text-xl text-slate-100 mb-1">Restas</h3>
+                            <p id="modeRestasDesc" class="text-xs text-slate-400">Calcula diferencias sin que el resultado sea negativo.</p>
                         </div>
                         <div class="mt-6 flex items-center justify-between text-xs font-bold text-amber-400">
-                            <span>JUGAR AHORA</span>
+                            <span class="lblPlayNow">JUGAR AHORA</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -222,11 +233,11 @@
                             <i class="fa-solid fa-xmark"></i>
                         </div>
                         <div>
-                            <h3 class="font-display font-extrabold text-xl text-slate-100 mb-1">Multiplicar</h3>
-                            <p class="text-xs text-slate-400">Repasa las tablas de multiplicar de forma ágil y divertida.</p>
+                            <h3 id="modeMultTitle" class="font-display font-extrabold text-xl text-slate-100 mb-1">Multiplicar</h3>
+                            <p id="modeMultDesc" class="text-xs text-slate-400">Repasa las tablas de multiplicar de forma ágil y divertida.</p>
                         </div>
                         <div class="mt-6 flex items-center justify-between text-xs font-bold text-rose-400">
-                            <span>JUGAR AHORA</span>
+                            <span class="lblPlayNow">JUGAR AHORA</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -239,7 +250,7 @@
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-users text-indigo-400"></i>
-                        <h2 class="font-display font-bold text-lg text-slate-100">Perfiles Guardados en este dispositivo</h2>
+                        <h2 id="lblProfilesTitle" class="font-display font-bold text-lg text-slate-100">Perfiles Guardados en este dispositivo</h2>
                     </div>
                     <span class="text-xs text-slate-500">localStorage</span>
                 </div>
@@ -256,7 +267,7 @@
             <div class="glass-panel rounded-2xl p-4 border-slate-800 flex items-center justify-between">
                 <button onclick="volverAlMenu()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-chevron-left"></i>
-                    <span>Menú Principal</span>
+                    <span id="btnBackMenu">Menú Principal</span>
                 </button>
 
                 <div class="flex items-center gap-2">
@@ -270,13 +281,13 @@
 
                 <div class="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
                     <i class="fa-solid fa-fire text-amber-500"></i>
-                    <span class="text-xs font-bold text-amber-400">Racha: <span id="streakCount">0</span></span>
+                    <span class="text-xs font-bold text-amber-400"><span id="lblStreak">Racha</span>: <span id="streakCount">0</span></span>
                 </div>
             </div>
 
             <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
 
-                <!-- Left Column: Interactive Exercise Container -->
+                <!-- Left Column: Interactive Exercise Box -->
                 <section class="lg:col-span-2 glass-panel rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative border-slate-800">
                     
                     <!-- Exercise Display Box -->
@@ -298,21 +309,21 @@
                             class="p-5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-2xl shadow-lg font-display font-extrabold text-xl flex flex-col items-center justify-center gap-1 border border-emerald-400/30">
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-circle-check"></i>
-                                <span>SÍ (ES PAR)</span>
+                                <span id="btnParText">SÍ (ES PAR)</span>
                             </div>
-                            <span class="text-xs font-sans font-medium opacity-80">Tecla [S] o Flecha [←]</span>
+                            <span id="btnParKey" class="text-xs font-sans font-medium opacity-80">Tecla [S] o Flecha [←]</span>
                         </button>
                         <button onclick="verificarRespuestaParImpar(false)"
                             class="p-5 bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-2xl shadow-lg font-display font-extrabold text-xl flex flex-col items-center justify-center gap-1 border border-rose-400/30">
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-circle-xmark"></i>
-                                <span>NO (ES IMPAR)</span>
+                                <span id="btnImparText">NO (ES IMPAR)</span>
                             </div>
-                            <span class="text-xs font-sans font-medium opacity-80">Tecla [N] o Flecha [→]</span>
+                            <span id="btnImparKey" class="text-xs font-sans font-medium opacity-80">Tecla [N] o Flecha [→]</span>
                         </button>
                     </div>
 
-                    <!-- MODE 2: MULTIPLE CHOICE OPTIONS (Math Operations) -->
+                    <!-- MODE 2: MULTIPLE CHOICE OPTIONS -->
                     <div id="controlsMultipleChoice" class="hidden grid grid-cols-2 gap-3 mt-2">
                         <button onclick="verificarRespuestaOpcion(0)" id="opt-0" class="opt-btn p-4 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl font-display font-extrabold text-xl sm:text-2xl border border-slate-700 transition-all">0</button>
                         <button onclick="verificarRespuestaOpcion(1)" id="opt-1" class="opt-btn p-4 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl font-display font-extrabold text-xl sm:text-2xl border border-slate-700 transition-all">0</button>
@@ -323,15 +334,15 @@
                     <!-- Scoreboard Cards -->
                     <div class="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-800">
                         <div class="glass-card p-3 rounded-xl text-center border-slate-800">
-                            <span class="text-xs text-slate-400 font-semibold uppercase">Jugados</span>
+                            <span id="lblStatPlayed" class="text-xs text-slate-400 font-semibold uppercase">Jugados</span>
                             <div id="statTotal" class="text-xl sm:text-2xl font-black font-display text-slate-100">0</div>
                         </div>
                         <div class="glass-card p-3 rounded-xl text-center border-emerald-950/40 bg-emerald-950/10">
-                            <span class="text-xs text-emerald-400 font-semibold uppercase">Aciertos</span>
+                            <span id="lblStatCorrect" class="text-xs text-emerald-400 font-semibold uppercase">Aciertos</span>
                             <div id="statAciertos" class="text-xl sm:text-2xl font-black font-display text-emerald-400">0</div>
                         </div>
                         <div class="glass-card p-3 rounded-xl text-center border-rose-950/40 bg-rose-950/10">
-                            <span class="text-xs text-rose-400 font-semibold uppercase">Fallos</span>
+                            <span id="lblStatWrong" class="text-xs text-rose-400 font-semibold uppercase">Fallos</span>
                             <div id="statFallos" class="text-xl sm:text-2xl font-black font-display text-rose-400">0</div>
                         </div>
                     </div>
@@ -342,23 +353,23 @@
                     <div>
                         <div class="flex items-center gap-2 mb-3 border-b border-slate-800 pb-3">
                             <i class="fa-solid fa-lightbulb text-amber-400"></i>
-                            <h3 class="font-display font-bold text-slate-100">Guía de Ayuda</h3>
+                            <h3 id="lblHelpGuideTitle" class="font-display font-bold text-slate-100">Guía de Ayuda</h3>
                         </div>
                         <div id="guideTextContent" class="text-xs sm:text-sm text-slate-300 space-y-2">
-                            <!-- Dynamic rule explanation depending on mode -->
+                            <!-- Dynamic guide content -->
                         </div>
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-2 border-b border-slate-800 pb-2">
-                            <h4 class="font-display font-bold text-xs text-slate-400 uppercase">Últimos Intentos</h4>
-                            <button onclick="limpiarHistorial()" class="text-[10px] text-slate-500 hover:text-slate-300">Limpiar</button>
+                            <h4 id="lblHistoryTitle" class="font-display font-bold text-xs text-slate-400 uppercase">Últimos Intentos</h4>
+                            <button onclick="limpiarHistorial()" id="btnClearHistory" class="text-[10px] text-slate-500 hover:text-slate-300">Limpiar</button>
                         </div>
                         <div class="overflow-y-auto max-h-48 pr-1">
                             <table class="w-full text-left text-xs">
                                 <tbody id="historyTableBody" class="divide-y divide-slate-800/60 font-medium">
                                     <tr id="emptyHistoryRow">
-                                        <td class="text-center p-4 text-slate-500 italic">No hay intentos registrados.</td>
+                                        <td id="lblEmptyHistory" class="text-center p-4 text-slate-500 italic">No hay intentos registrados.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -369,14 +380,175 @@
         </div>
 
         <footer class="text-center text-xs text-slate-500 py-4">
-            Math Master • Suite Educativa de Matemáticas
+            Math Master • Suite Educativa Multilingüe
         </footer>
     </div>
 
     <script>
-        // Global Game State
-        let modoActual = 'par_impar'; // 'par_impar', 'sumas', 'restas', 'multiplicaciones'
-        let dificultadActual = 'facil'; // 'facil', 'medio', 'dificil'
+        // Language Dictionaries
+        const translations = {
+            es: {
+                appSubtitle: "Aprende matemáticas jugando • Progreso guardado por nombre",
+                btnSave: "Guardar",
+                btnLoad: "Cargar",
+                lblActivePlayer: "Jugador Activo:",
+                lblDisconnect: "Cambiar",
+                lblDifficultyTitle: "Elige el Nivel de Dificultad",
+                lblDifficultySub: "Ajusta el rango numérico según tu nivel actual.",
+                diffFacil: "FÁCIL",
+                diffMedio: "MEDIO",
+                diffDificil: "DIFÍCIL",
+                lblModesTitle: "Selecciona una Modalidad",
+                modeParImparTitle: "Par o Impar",
+                modeParImparDesc: "Identifica rápidamente si la cifra generada es divisible entre 2.",
+                modeSumasTitle: "Sumas",
+                modeSumasDesc: "Suma números rápidamente y ejercita tu cálculo mental.",
+                modeRestasTitle: "Restas",
+                modeRestasDesc: "Calcula diferencias sin que el resultado sea negativo.",
+                modeMultTitle: "Multiplicar",
+                modeMultDesc: "Repasa las tablas de multiplicar de forma ágil y divertida.",
+                lblPlayNow: "JUGAR AHORA",
+                lblProfilesTitle: "Perfiles Guardados en este dispositivo",
+                noProfiles: "No hay perfiles guardados. Escribe tu nombre arriba para comenzar.",
+                btnBackMenu: "Menú Principal",
+                lblStreak: "Racha",
+                problemSubtextPar: "¿Es PAR o IMPAR?",
+                problemSubtextMath: "Selecciona la respuesta correcta",
+                btnParText: "SÍ (ES PAR)",
+                btnImparText: "NO (ES IMPAR)",
+                btnParKey: "Tecla [S] o Flecha [←]",
+                btnImparKey: "Tecla [N] o Flecha [→]",
+                lblStatPlayed: "Jugados",
+                lblStatCorrect: "Aciertos",
+                lblStatWrong: "Fallos",
+                lblHelpGuideTitle: "Guía de Ayuda",
+                lblHistoryTitle: "Últimos Intentos",
+                btnClearHistory: "Limpiar",
+                lblEmptyHistory: "No hay intentos registrados.",
+                feedbackCorrect: "¡Excelente! Respuesta correcta 🎉",
+                feedbackIncorrect: "Incorrecto. La respuesta era ",
+                parLabel: "PAR",
+                imparLabel: "IMPAR",
+                alertNameRequired: "Por favor, introduce un nombre para guardar tu progreso.",
+                alertSaveSuccess: "¡Partida de {name} guardada con éxito!",
+                alertLoadSuccess: "¡Partida de {name} cargada con éxito!",
+                alertProfileNotFound: "No existe ningún perfil guardado a nombre de {name}.",
+                confirmDelete: "¿Eliminar definitivamente el perfil de {name}?",
+                guidePar: "💡 <b>Truco Par:</b> Mira solo el último dígito. Si termina en <b>0, 2, 4, 6, 8</b> es Par.",
+                guideSumas: "💡 <b>Consejo:</b> Descompón en decenas y unidades. Ejemplo: 14 + 8 = (14 + 6) + 2 = 22.",
+                guideRestas: "💡 <b>Consejo:</b> Cuenta hacia adelante desde el número menor hasta el mayor.",
+                guideMult: "💡 <b>Tabla de multiplicar:</b> Multiplicar por 5 termina en 0 o 5. Multiplicar por 10 añade un cero al final."
+            },
+            it: {
+                appSubtitle: "Impara la matematica giocando • I progressi vengono salvati per nome",
+                btnSave: "Salva",
+                btnLoad: "Carica",
+                lblActivePlayer: "Giocatore Attivo:",
+                lblDisconnect: "Cambia",
+                lblDifficultyTitle: "Scegli il Livello di Difficoltà",
+                lblDifficultySub: "Regola l'intervallo numerico in base al tuo livello.",
+                diffFacil: "FACILE",
+                diffMedio: "MEDIO",
+                diffDificil: "DIFFICILE",
+                lblModesTitle: "Seleziona una Modalità",
+                modeParImparTitle: "Pari o Dispari",
+                modeParImparDesc: "Identifica rapidamente se il numero generato è divisibile per 2.",
+                modeSumasTitle: "Addizioni",
+                modeSumasDesc: "Somma i numeri rapidamente ed esercita il calcolo mentale.",
+                modeRestasTitle: "Sottrazioni",
+                modeRestasDesc: "Calcola le differenze senza che il risultato sia negativo.",
+                modeMultTitle: "Moltiplicazioni",
+                modeMultDesc: "Ripassa le tabelline in modo veloce e divertente.",
+                lblPlayNow: "GIOCA ORA",
+                lblProfilesTitle: "Profili Salvati su questo dispositivo",
+                noProfiles: "Nessun profilo salvato. Scrivi il tuo nome in alto per iniziare.",
+                btnBackMenu: "Menu Principale",
+                lblStreak: "Serie",
+                problemSubtextPar: "È PARI o DISPARI?",
+                problemSubtextMath: "Seleziona la risposta corretta",
+                btnParText: "SÌ (È PARI)",
+                btnImparText: "NO (È DISPARI)",
+                btnParKey: "Tasto [S] o Freccia [←]",
+                btnImparKey: "Tasto [N] o Freccia [→]",
+                lblStatPlayed: "Giocate",
+                lblStatCorrect: "Exiti",
+                lblStatWrong: "Errori",
+                lblHelpGuideTitle: "Guida di Aiuto",
+                lblHistoryTitle: "Ultimi Tentativi",
+                btnClearHistory: "Pulisci",
+                lblEmptyHistory: "Nessun tentativo registrato.",
+                feedbackCorrect: "Eccellente! Risposta corretta 🎉",
+                feedbackIncorrect: "Sbagliato. La risposta era ",
+                parLabel: "PARI",
+                imparLabel: "DISPARI",
+                alertNameRequired: "Per favore, inserisci un nome per salvare i tuoi progressi.",
+                alertSaveSuccess: "Partita di {name} salvata con successo!",
+                alertLoadSuccess: "Partita di {name} caricata con successo!",
+                alertProfileNotFound: "Nessun profilo trovato con il nome {name}.",
+                confirmDelete: "Eliminare definitivamente il profilo di {name}?",
+                guidePar: "💡 <b>Trucco Pari:</b> Guarda solo l'ultima cifra. Se finisce per <b>0, 2, 4, 6, 8</b> è Pari.",
+                guideSumas: "💡 <b>Consiglio:</b> Scomponi in decine e unità. Esempio: 14 + 8 = (14 + 6) + 2 = 22.",
+                guideRestas: "💡 <b>Consiglio:</b> Conta in avanti dal numero minore al numero maggiore.",
+                guideMult: "💡 <b>Tabellina:</b> Moltiplicare per 5 finisce in 0 o 5. Moltiplicare per 10 aggiunge uno zero alla fine."
+            },
+            en: {
+                appSubtitle: "Learn math while playing • Progress saved by player name",
+                btnSave: "Save",
+                btnLoad: "Load",
+                lblActivePlayer: "Active Player:",
+                lblDisconnect: "Switch",
+                lblDifficultyTitle: "Choose Difficulty Level",
+                lblDifficultySub: "Adjust number range based on your skill level.",
+                diffFacil: "EASY",
+                diffMedio: "MEDIUM",
+                diffDificil: "HARD",
+                lblModesTitle: "Select a Game Mode",
+                modeParImparTitle: "Even or Odd",
+                modeParImparDesc: "Quickly identify whether the generated number is divisible by 2.",
+                modeSumasTitle: "Addition",
+                modeSumasDesc: "Add numbers quickly and practice mental math.",
+                modeRestasTitle: "Subtraction",
+                modeRestasDesc: "Calculate differences ensuring positive outcomes.",
+                modeMultTitle: "Multiplication",
+                modeMultDesc: "Review multiplication tables in a fast and fun way.",
+                lblPlayNow: "PLAY NOW",
+                lblProfilesTitle: "Saved Profiles on this device",
+                noProfiles: "No saved profiles. Type your name above to get started.",
+                btnBackMenu: "Main Menu",
+                lblStreak: "Streak",
+                problemSubtextPar: "Is it EVEN or ODD?",
+                problemSubtextMath: "Select the correct answer",
+                btnParText: "YES (EVEN)",
+                btnImparText: "NO (ODD)",
+                btnParKey: "Key [S] or Arrow [←]",
+                btnImparKey: "Key [N] or Arrow [→]",
+                lblStatPlayed: "Played",
+                lblStatCorrect: "Correct",
+                lblStatWrong: "Wrong",
+                lblHelpGuideTitle: "Help Guide",
+                lblHistoryTitle: "Recent Attempts",
+                btnClearHistory: "Clear",
+                lblEmptyHistory: "No attempts recorded.",
+                feedbackCorrect: "Excellent! Correct answer 🎉",
+                feedbackIncorrect: "Incorrect. The answer was ",
+                parLabel: "EVEN",
+                imparLabel: "ODD",
+                alertNameRequired: "Please enter a name to save your progress.",
+                alertSaveSuccess: "Game progress for {name} saved successfully!",
+                alertLoadSuccess: "Game progress for {name} loaded successfully!",
+                alertProfileNotFound: "No saved profile found under the name {name}.",
+                confirmDelete: "Permanently delete profile for {name}?",
+                guidePar: "💡 <b>Even Trick:</b> Look at the last digit. If it ends in <b>0, 2, 4, 6, 8</b> it is Even.",
+                guideSumas: "💡 <b>Tip:</b> Break numbers into tens and units. Example: 14 + 8 = (14 + 6) + 2 = 22.",
+                guideRestas: "💡 <b>Tip:</b> Count upwards from the smaller number to the larger number.",
+                guideMult: "💡 <b>Table Tip:</b> Multiplying by 5 ends in 0 or 5. Multiplying by 10 adds a zero at the end."
+            }
+        };
+
+        // Game State Variables
+        let idiomaActual = 'es';
+        let modoActual = 'par_impar';
+        let dificultadActual = 'facil';
         let jugadorActual = "";
 
         let numA = 0;
@@ -389,40 +561,112 @@
         let total = 0;
         let racha = 0;
 
-        // Tone.js Synth audio initialization
-        let synthCorrect, synthWrong, audioInitialized = false;
+        // Native Web Audio API Synthesizer
+        let audioCtx = null;
 
-        function initAudio() {
-            if (audioInitialized) return;
+        function playSound(type) {
             try {
-                synthCorrect = new Tone.Synth({
-                    oscillator: { type: 'triangle' },
-                    envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 }
-                }).toDestination();
-                
-                synthWrong = new Tone.Synth({
-                    oscillator: { type: 'sawtooth' },
-                    envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 }
-                }).toDestination();
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
 
-                Tone.start();
-                audioInitialized = true;
-            } catch (e) {}
-        }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-        function playSound(isCorrect) {
-            if (!audioInitialized) initAudio();
-            try {
-                if (isCorrect) {
-                    synthCorrect.triggerAttackRelease("E5", "8n", Tone.now());
-                    synthCorrect.triggerAttackRelease("G5", "8n", Tone.now() + 0.08);
-                } else {
-                    synthWrong.triggerAttackRelease("F2", "8n", Tone.now());
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.setValueAtTime(130, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
                 }
             } catch (e) {}
         }
 
-        // Navigation between Views
+        function cambiarIdioma(lang) {
+            idiomaActual = lang;
+            document.getElementById('languageSelect').value = lang;
+            const t = translations[lang];
+
+            // Static Text Elements
+            document.getElementById('appSubtitle').innerText = t.appSubtitle;
+            document.getElementById('btnSaveText').innerText = t.btnSave;
+            document.getElementById('btnLoadText').innerText = t.btnLoad;
+            document.getElementById('lblActivePlayer').innerText = t.lblActivePlayer;
+            document.getElementById('lblDisconnect').innerText = t.lblDisconnect;
+            document.getElementById('lblDifficultyTitle').childNodes[2].nodeValue = " " + t.lblDifficultyTitle;
+            document.getElementById('lblDifficultySub').innerText = t.lblDifficultySub;
+            document.getElementById('diffFacilText').innerText = t.diffFacil;
+            document.getElementById('diffMedioText').innerText = t.diffMedio;
+            document.getElementById('diffDificilText').innerText = t.diffDificil;
+            document.getElementById('lblModesTitle').childNodes[2].nodeValue = " " + t.lblModesTitle;
+            document.getElementById('modeParImparTitle').innerText = t.modeParImparTitle;
+            document.getElementById('modeParImparDesc').innerText = t.modeParImparDesc;
+            document.getElementById('modeSumasTitle').innerText = t.modeSumasTitle;
+            document.getElementById('modeSumasDesc').innerText = t.modeSumasDesc;
+            document.getElementById('modeRestasTitle').innerText = t.modeRestasTitle;
+            document.getElementById('modeRestasDesc').innerText = t.modeRestasDesc;
+            document.getElementById('modeMultTitle').innerText = t.modeMultTitle;
+            document.getElementById('modeMultDesc').innerText = t.modeMultDesc;
+
+            document.querySelectorAll('.lblPlayNow').forEach(el => el.innerText = t.lblPlayNow);
+
+            document.getElementById('lblProfilesTitle').innerText = t.lblProfilesTitle;
+            document.getElementById('btnBackMenu').innerText = t.btnBackMenu;
+            document.getElementById('lblStreak').innerText = t.lblStreak;
+
+            document.getElementById('btnParText').innerText = t.btnParText;
+            document.getElementById('btnImparText').innerText = t.btnImparText;
+            document.getElementById('btnParKey').innerText = t.btnParKey;
+            document.getElementById('btnImparKey').innerText = t.btnImparKey;
+
+            document.getElementById('lblStatPlayed').innerText = t.lblStatPlayed;
+            document.getElementById('lblStatCorrect').innerText = t.lblStatCorrect;
+            document.getElementById('lblStatWrong').innerText = t.lblStatWrong;
+            document.getElementById('lblHelpGuideTitle').innerText = t.lblHelpGuideTitle;
+            document.getElementById('lblHistoryTitle').innerText = t.lblHistoryTitle;
+            document.getElementById('btnClearHistory').innerText = t.btnClearHistory;
+
+            const emptyHistory = document.getElementById('lblEmptyHistory');
+            if (emptyHistory) emptyHistory.innerText = t.lblEmptyHistory;
+
+            // Update Arena Titles if in Game
+            document.getElementById('activeModeBadge').innerText = getModoTraduccion(modoActual);
+            document.getElementById('activeDiffBadge').innerText = t['diff' + dificultadActual.charAt(0).toUpperCase() + dificultadActual.slice(1)];
+
+            actualizarGuiaEducativa();
+            renderizarListaPerfiles();
+
+            if (jugadorActual) {
+                guardarDatosSilencioso();
+            }
+        }
+
+        function getModoTraduccion(modo) {
+            const t = translations[idiomaActual];
+            if (modo === 'par_impar') return t.modeParImparTitle;
+            if (modo === 'sumas') return t.modeSumasTitle;
+            if (modo === 'restas') return t.modeRestasTitle;
+            return t.modeMultTitle;
+        }
+
         function setDificultad(dif) {
             dificultadActual = dif;
             document.querySelectorAll('.diff-btn').forEach(btn => {
@@ -444,11 +688,10 @@
             document.getElementById('viewGame').classList.remove('hidden');
             document.getElementById('viewGame').classList.add('flex');
 
-            // Badges
-            document.getElementById('activeModeBadge').innerText = modo.replace('_', ' ');
-            document.getElementById('activeDiffBadge').innerText = dificultadActual;
+            const t = translations[idiomaActual];
+            document.getElementById('activeModeBadge').innerText = getModoTraduccion(modo);
+            document.getElementById('activeDiffBadge').innerText = t['diff' + dificultadActual.charAt(0).toUpperCase() + dificultadActual.slice(1)];
 
-            // Toggle Controls Layout
             if (modo === 'par_impar') {
                 document.getElementById('controlsParImpar').classList.remove('hidden');
                 document.getElementById('controlsMultipleChoice').classList.add('hidden');
@@ -469,19 +712,19 @@
             renderizarListaPerfiles();
         }
 
-        // Exercise Generator
         function generarEjercicio() {
             let min = 1, max = 10;
             if (dificultadActual === 'medio') { min = 10; max = 50; }
             if (dificultadActual === 'dificil') { min = 50; max = 200; }
 
             const problemEl = document.getElementById('mathProblemDisplay');
+            const t = translations[idiomaActual];
 
             if (modoActual === 'par_impar') {
                 numA = Math.floor(Math.random() * (max - min + 1)) + min;
                 respuestaCorrecta = (numA % 2 === 0);
                 problemEl.innerText = numA;
-                document.getElementById('problemSubtext').innerText = "¿Es PAR o IMPAR?";
+                document.getElementById('problemSubtext').innerText = t.problemSubtextPar;
             } else {
                 if (modoActual === 'sumas') {
                     numA = Math.floor(Math.random() * max) + min;
@@ -490,7 +733,7 @@
                     problemEl.innerText = `${numA} + ${numB} = ?`;
                 } else if (modoActual === 'restas') {
                     numA = Math.floor(Math.random() * max) + min;
-                    numB = Math.floor(Math.random() * numA) + 1; // Always positive
+                    numB = Math.floor(Math.random() * numA) + 1;
                     respuestaCorrecta = numA - numB;
                     problemEl.innerText = `${numA} - ${numB} = ?`;
                 } else if (modoActual === 'multiplicaciones') {
@@ -500,7 +743,7 @@
                     respuestaCorrecta = numA * numB;
                     problemEl.innerText = `${numA} × ${numB} = ?`;
                 }
-                document.getElementById('problemSubtext').innerText = "Selecciona la respuesta correcta";
+                document.getElementById('problemSubtext').innerText = t.problemSubtextMath;
                 generarOpciones(respuestaCorrecta);
             }
         }
@@ -520,9 +763,9 @@
             });
         }
 
-        // Gameplay Validation
         function verificarRespuestaParImpar(eleccion) {
-            verificarResultado(eleccion === respuestaCorrecta, eleccion ? 'PAR' : 'IMPAR', respuestaCorrecta ? 'PAR' : 'IMPAR');
+            const t = translations[idiomaActual];
+            verificarResultado(eleccion === respuestaCorrecta, eleccion ? t.parLabel : t.imparLabel, respuestaCorrecta ? t.parLabel : t.imparLabel);
         }
 
         function verificarRespuestaOpcion(idx) {
@@ -531,20 +774,20 @@
         }
 
         function verificarResultado(esCorrecto, respuestaDada, correctaReal) {
-            initAudio();
             total++;
+            const t = translations[idiomaActual];
 
             if (esCorrecto) {
                 aciertos++;
                 racha++;
-                playSound(true);
-                mostrarFeedback(true, "¡Excelente! Respuesta correcta 🎉");
+                playSound('correct');
+                mostrarFeedback(true, t.feedbackCorrect);
                 try { confetti({ particleCount: 25, spread: 50, origin: { y: 0.7 } }); } catch (e) {}
             } else {
                 fallos++;
                 racha = 0;
-                playSound(false);
-                mostrarFeedback(false, `Incorrecto. La respuesta era ${correctaReal} ❌`);
+                playSound('wrong');
+                mostrarFeedback(false, `${t.feedbackIncorrect}${correctaReal} ❌`);
             }
 
             actualizarMarcadores();
@@ -583,8 +826,8 @@
 
             row.innerHTML = `
                 <td class="p-2 font-mono text-slate-500">#${total}</td>
-                <td class="p-2 font-semibold text-slate-300">Tuya: ${dada}</td>
-                <td class="p-2 text-slate-400">Real: ${real}</td>
+                <td class="p-2 font-semibold text-slate-300">${dada}</td>
+                <td class="p-2 text-slate-400">${real}</td>
                 <td class="p-2 text-right font-bold ${esCorrecto ? 'text-emerald-400' : 'text-rose-400'}">
                     ${esCorrecto ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-xmark"></i>'}
                 </td>
@@ -594,51 +837,32 @@
         }
 
         function limpiarHistorial() {
+            const t = translations[idiomaActual];
             document.getElementById('historyTableBody').innerHTML = `
-                <tr id="emptyHistoryRow"><td class="text-center p-4 text-slate-500 italic">No hay intentos registrados.</td></tr>
+                <tr id="emptyHistoryRow"><td id="lblEmptyHistory" class="text-center p-4 text-slate-500 italic">${t.lblEmptyHistory}</td></tr>
             `;
         }
 
         function actualizarGuiaEducativa() {
             const guide = document.getElementById('guideTextContent');
-            if (modoActual === 'par_impar') {
-                guide.innerHTML = `
-                    <div class="p-2.5 glass-card rounded-lg border-indigo-500/20">
-                        <span class="font-bold text-indigo-300">💡 Truco Par:</span>
-                        Mira solo el último dígito. Si termina en <strong>0, 2, 4, 6, 8</strong> es Par.
-                    </div>
-                `;
-            } else if (modoActual === 'sumas') {
-                guide.innerHTML = `
-                    <div class="p-2.5 glass-card rounded-lg border-emerald-500/20">
-                        <span class="font-bold text-emerald-300">💡 Consejo:</span>
-                        Descompón en decenas y unidades. Ejemplo: 14 + 8 = (14 + 6) + 2 = 22.
-                    </div>
-                `;
-            } else if (modoActual === 'restas') {
-                guide.innerHTML = `
-                    <div class="p-2.5 glass-card rounded-lg border-amber-500/20">
-                        <span class="font-bold text-amber-300">💡 Consejo:</span>
-                        Cuenta hacia adelante desde el número menor hasta llegar al mayor.
-                    </div>
-                `;
-            } else {
-                guide.innerHTML = `
-                    <div class="p-2.5 glass-card rounded-lg border-rose-500/20">
-                        <span class="font-bold text-rose-300">💡 Tabla de multiplicar:</span>
-                        Multiplicar por 5 siempre termina en 0 o 5. Multiplicar por 10 añade un cero al final.
-                    </div>
-                `;
-            }
+            const t = translations[idiomaActual];
+
+            let htmlContent = "";
+            if (modoActual === 'par_impar') htmlContent = t.guidePar;
+            else if (modoActual === 'sumas') htmlContent = t.guideSumas;
+            else if (modoActual === 'restas') htmlContent = t.guideRestas;
+            else htmlContent = t.guideMult;
+
+            guide.innerHTML = `<div class="p-2.5 glass-card rounded-lg border-indigo-500/20">${htmlContent}</div>`;
         }
 
-        // Profile Storage Logic
         function guardarPartida() {
             const input = document.getElementById('playerInput');
             const nombre = input.value.trim();
+            const t = translations[idiomaActual];
 
             if (!nombre) {
-                alert("Por favor, introduce un nombre para guardar tu progreso.");
+                alert(t.alertNameRequired);
                 input.focus();
                 return;
             }
@@ -650,7 +874,7 @@
             document.getElementById('activeProfileBanner').classList.remove('hidden');
 
             renderizarListaPerfiles();
-            alert(`¡Partida de "${jugadorActual}" guardada con éxito!`);
+            alert(t.alertSaveSuccess.replace('{name}', jugadorActual));
         }
 
         function guardarDatosSilencioso() {
@@ -661,12 +885,14 @@
                 fallos: fallos,
                 total: total,
                 racha: racha,
-                dificultad: dificultadActual
+                dificultad: dificultadActual,
+                idioma: idiomaActual
             };
             localStorage.setItem('math_master_' + jugadorActual.toLowerCase(), JSON.stringify(perfilData));
         }
 
         function cargarPerfil(nombre) {
+            const t = translations[idiomaActual];
             const dataRaw = localStorage.getItem('math_master_' + nombre.toLowerCase());
             if (!dataRaw) return;
 
@@ -677,7 +903,9 @@
                 fallos = data.fallos || 0;
                 total = data.total || 0;
                 racha = data.racha || 0;
+
                 if (data.dificultad) setDificultad(data.dificultad);
+                if (data.idioma && data.idioma !== idiomaActual) cambiarIdioma(data.idioma);
 
                 document.getElementById('playerInput').value = jugadorActual;
                 document.getElementById('activePlayerName').innerText = jugadorActual;
@@ -690,17 +918,20 @@
 
         function cargarPartidaManual() {
             const nombre = document.getElementById('playerInput').value.trim();
-            if (!nombre) { alert("Escribe el nombre del perfil a cargar."); return; }
+            const t = translations[idiomaActual];
+            if (!nombre) { alert(t.alertNameRequired); return; }
             if (localStorage.getItem('math_master_' + nombre.toLowerCase())) {
                 cargarPerfil(nombre);
+                alert(t.alertLoadSuccess.replace('{name}', nombre));
             } else {
-                alert(`No existe ningún perfil guardado a nombre de "${nombre}".`);
+                alert(t.alertProfileNotFound.replace('{name}', nombre));
             }
         }
 
         function borrarPerfil(nombre, e) {
             e.stopPropagation();
-            if (confirm(`¿Eliminar definitivamente el perfil de "${nombre}"?`)) {
+            const t = translations[idiomaActual];
+            if (confirm(t.confirmDelete.replace('{name}', nombre))) {
                 localStorage.removeItem('math_master_' + nombre.toLowerCase());
                 if (jugadorActual.toLowerCase() === nombre.toLowerCase()) desconectarPerfil();
                 renderizarListaPerfiles();
@@ -716,7 +947,9 @@
 
         function renderizarListaPerfiles() {
             const container = document.getElementById('profilesList');
+            const t = translations[idiomaActual];
             const perfiles = [];
+
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('math_master_')) {
@@ -727,7 +960,7 @@
             if (perfiles.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full text-center py-4 text-slate-500 text-xs">
-                        No hay perfiles guardados. Escribe tu nombre arriba para comenzar.
+                        ${t.noProfiles}
                     </div>
                 `;
                 return;
@@ -744,7 +977,7 @@
                 card.innerHTML = `
                     <div class="truncate">
                         <span class="font-bold text-sm block truncate">${p.nombre}</span>
-                        <span class="text-[10px] text-slate-400">Aciertos: ${p.aciertos} • Total: ${p.total}</span>
+                        <span class="text-[10px] text-slate-400">${t.lblStatCorrect}: ${p.aciertos} • ${t.lblStatPlayed}: ${p.total}</span>
                     </div>
                     <button onclick="borrarPerfil('${p.nombre}', event)" class="text-slate-500 hover:text-rose-400 p-1">
                         <i class="fa-solid fa-trash-can text-xs"></i>
@@ -754,7 +987,6 @@
             });
         }
 
-        // Keyboard Shortcuts
         window.addEventListener('keydown', (e) => {
             if (document.activeElement.tagName === 'INPUT') return;
             if (modoActual === 'par_impar') {
@@ -764,7 +996,7 @@
         });
 
         window.onload = function() {
-            renderizarListaPerfiles();
+            cambiarIdioma('es');
         };
     </script>
 </body>
